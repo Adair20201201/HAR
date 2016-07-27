@@ -1,1 +1,2 @@
 # HAR
+Human Activity Recognition
