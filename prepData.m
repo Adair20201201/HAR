@@ -1,10 +1,13 @@
 clear all
 close all
 %clc
-projectDir =  'G:\ActionDataColection\ActionData\0716';
+%projectDir =  'G:\ActionDataColection\ActionData\0716';
+%projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)';
+projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/HAR(20160727)';
 cd(projectDir);
 %DataDir='./SensorData_labeled/Tan/';
-DataDir = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\';
+%DataDir = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\';
+DataDir='/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)/SensorData_labeled/Tan/';
 filetype='.csv';
 %filetype='.xls';
 files = dir([DataDir '*' filetype]);

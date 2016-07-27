@@ -32,7 +32,8 @@ for k=1:gap:size(tmpData,2)
             continue;
         end
         
-        if ~isnan(label_mat(Sample{sam_idx}.Time))
+        %if ~isnan(label_mat(Sample{sam_idx}.Time))&&(Sample{sam_idx}.Label~=0)
+        if label_mat(Sample{sam_idx}.Time)>0
                 % Hz
                 Sample{sam_idx}.Hz = (win-1)/(tmpTime(k+win-1)-tmpTime(k));
 
