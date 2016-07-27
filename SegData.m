@@ -42,7 +42,10 @@ for k=1:gap:size(tmpData,2)
 
                 %Label
                 Sample{sam_idx}.Label = label_mat(Sample{sam_idx}.Time);
-
+                
+                % Location
+                Sample{sam_idx}.Location = calcLocation(tmpData(:,k:k+win-1));
+                
                 % Increas sample index
                 sam_idx=sam_idx+1;
         end
