@@ -24,24 +24,12 @@ for i=1:length(ModelOutput) %number of cross validations
     inferedLabels = [inferedLabels this_inferedLabels];
     
     % Calculate ROC and AUC
-    [tpr,fpr,auc] = calcROC_AUC(this_trueLabels', this_predict_loglik');
-    color=[0 0 1
-                0 1 0
-                0 1 1
-                1 0 0
-                1 0 1
-                1 1 0
-                0 .5 0
-                0 .75 .75
-                ] ; %自定义颜色
-    figure(i); 
-    hold on;
+    [tpr,fpr,auc] = calcROC_AUC(this_trueLabels, this_predict_loglik');
+    
     for j = 1:length(auc)
-%        tprTotal{j}(i,:) = tpr{1,j};  % Demation are different
-%        fprTotal{j}(i,:) = fpr{1,j};
-        aucTotal{j}(i,:) = auc{1,j};
-        plot(fpr{j},tpr{j},'color',color(j,:));
-       
+        tprTotal{j} = [tprTotal{j}; tpr{1,j}];
+        fprTotal{j} = [fprTotal{j};fpr{j}];
+        aucTotal{j} = [aucTotal{j};auc{j}];
     end
     
 end
@@ -58,14 +46,18 @@ statStruct.Acc = mean(tempAcc);
 statStruct.stdAcc = std(tempAcc);
 
 %%% Calculate and Visualize ROC and AUC
- 
-for i = 1:length(aucTotal)
-%      tpr{i} = mean(tprTotal{i},1);
-%      fpr{i} = mean(fprTotal{i},1);
-%      statStruct.tpr{i} = tpr{i};
-%      statStruct.fpr{i} = fpr{i};
+figure(1);
+
+for i = 1:length(fpr)
+     tpr{i} = mean(tprTotal{i},1);
+     fpr{i} = mean(fprTotal{i},1);
+     statStruct.tpr{i} = tpr{i};
+     statStruct.fpr{i} = fpr{i};
      statStruct.Auc{i} = mean(aucTotal{i},1);
      statStruct.stAuc{i} = std(aucTotal{i},0,1);
+     plot(fpr{i},tpr{i});
+     hold on;
 end
+hold off;
 
 

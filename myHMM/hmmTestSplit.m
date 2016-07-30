@@ -19,6 +19,7 @@ for i=1:length(curExp.testSet)
 end
 
 outTesting.inferedLabels = inferedLabels;
+outTesting.loglik = loglik;
 
 trueLabels = [];
 for i=1:length(curExp.testSet)
