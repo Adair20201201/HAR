@@ -8,12 +8,14 @@ function output = TrainTestSplit(modelName, curExp)
 
 % Training (learn parameters)
 %tic;
+disp('Training');
 modelTrain = strcat(modelName, 'TrainSplit'); % create train functionname e.g. hmmTrain
 output.training.learnedParams = feval(modelTrain, curExp);
 %output.training.elapsedTime = toc;
 
 % Testing (infer labels on testdata)
 %tic;
+disp('Testing');
 modelTest = strcat(modelName, 'TestSplit'); % create test functionname e.g. hmmTest
 output.testing = feval(modelTest, curExp, output.training.learnedParams);
 %output.testing.elapsedTime = toc;

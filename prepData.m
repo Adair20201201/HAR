@@ -45,6 +45,7 @@ for k=1:2
         %Samples = SegData(label_file,data_file,win,gap);
         %Samples = SegData(label_file,data_file,win,gap,'k-means',5);
         Samples = SegData(label_file,data_file,win,gap,'fft');
+        save Samples Samples;
         if i~=k % Training DataSet            
             TrainSet = [TrainSet Samples];
         else % Testing DataSet
@@ -60,22 +61,22 @@ for k=1:2
     Samples = []; 
     label_file = [];
     data_file = [];
-    for i=1:length(DataIdx)
-        label_file=[DataDir num2str(DataIdx(i)) filetype];
-        data_file=[DataDir num2str(DataIdx(i)) '.txt'];
-        %Samples = SegData(label_file,data_file,win,gap);
-        Samples = SegData(label_file,data_file,win,gap,'k-means',5);
-        %Samples = SegData(label_file,data_file,win,gap,'fft');
-        if i~=k % Training DataSet            
-            TrainSet = [TrainSet Samples];
-        else % Testing DataSet
-            TestSet = [TestSet Samples];
-        end
-    end
-    conf{2,1} = [];
-    conf{2,1}.trainSet = TrainSet;
-    conf{2,1}.testSet = TestSet;
-    
+%     for i=1:length(DataIdx)
+%         label_file=[DataDir num2str(DataIdx(i)) filetype];
+%         data_file=[DataDir num2str(DataIdx(i)) '.txt'];
+%         %Samples = SegData(label_file,data_file,win,gap);
+%         Samples = SegData(label_file,data_file,win,gap,'k-means',5);
+%         %Samples = SegData(label_file,data_file,win,gap,'fft');
+%         if i~=k % Training DataSet            
+%             TrainSet = [TrainSet Samples];
+%         else % Testing DataSet
+%             TestSet = [TestSet Samples];
+%         end
+%     end
+%     conf{2,1} = [];
+%     conf{2,1}.trainSet = TrainSet;
+%     conf{2,1}.testSet = TestSet;
+%     
     
     for i = 1:size(conf,1)
         curExp.trainSet = conf{i,1}.trainSet;
@@ -84,14 +85,14 @@ for k=1:2
         disp('Training and Testing NB');
         outputNB{i,k} = TrainTestSplit('nb', curExp);
          
-        disp('Training and Testing HMM');
-        curExp. try_HMM = 2; %differebt initial values
-        curExp.M = 2; %Number of mixtures (array)
-        curExp.Q = 4; %Number of states (array)
-        curExp.MAX_ITER = 5;%Max Iteration for HMM
-        curExp.cov_type = 'diag';
-        outputHMM{i,k} = TrainTestSplit('hmm', curExp);
-        %index = index+1;
+%         disp('Training and Testing HMM');
+%         curExp. try_HMM = 2; %differebt initial values
+%         curExp.M = 2; %Number of mixtures (array)
+%         curExp.Q = 4; %Number of states (array)
+%         curExp.MAX_ITER = 5;%Max Iteration for HMM
+%         curExp.cov_type = 'diag';
+%         outputHMM{i,k} = TrainTestSplit('hmm', curExp);
+%         %index = index+1;
         
     end
     

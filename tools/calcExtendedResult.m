@@ -4,10 +4,7 @@ function [statStruct] = calcExtendedResult(ModelName, ModelOutput)
 
 trueLabels = []; % all true labels
 inferedLabels = []; % all infered labels
-
-tprTotal = [];
-fprTotal = [];
-aucTotal = [];
+predict_loglik = []; % all predict loglik
 
 for i=1:length(ModelOutput) %number of cross validations
     this_trueLabels = ModelOutput{i}.testing.trueLabels; % for this cross valication
@@ -22,28 +19,7 @@ for i=1:length(ModelOutput) %number of cross validations
     % all true labels/all infered labels
     trueLabels = [trueLabels this_trueLabels];
     inferedLabels = [inferedLabels this_inferedLabels];
-    
-    % Calculate ROC and AUC
-    [tpr,fpr,auc] = calcROC_AUC(this_trueLabels', this_predict_loglik');
-    color=[0 0 1
-                0 1 0
-                0 1 1
-                1 0 0
-                1 0 1
-                1 1 0
-                0 .5 0
-                0 .75 .75
-                ] ; %自定义颜色
-    figure(i); 
-    hold on;
-    for j = 1:length(auc)
-%        tprTotal{j}(i,:) = tpr{1,j};  % Demation are different
-%        fprTotal{j}(i,:) = fpr{1,j};
-        aucTotal{j}(i,:) = auc{1,j};
-        plot(fpr{j},tpr{j},'color',color(j,:));
-       
-    end
-    
+    predict_loglik = [predict_loglik;this_predict_loglik];
 end
 
 %%% Confusion Matrix
@@ -58,14 +34,24 @@ statStruct.Acc = mean(tempAcc);
 statStruct.stdAcc = std(tempAcc);
 
 %%% Calculate and Visualize ROC and AUC
- 
-for i = 1:length(aucTotal)
-%      tpr{i} = mean(tprTotal{i},1);
-%      fpr{i} = mean(fprTotal{i},1);
-%      statStruct.tpr{i} = tpr{i};
-%      statStruct.fpr{i} = fpr{i};
-     statStruct.Auc{i} = mean(aucTotal{i},1);
-     statStruct.stAuc{i} = std(aucTotal{i},0,1);
-end
+[tpr,fpr,auc] = calcROC_AUC(trueLabels', predict_loglik');
+color = ['y','m','c','r','g','b','w','k'];
+marker = ['+','*','x','s','^','p','h','d'];
 
+figure; 
+hold on;
+for j = 1:length(auc)
+    plot(fpr{j},tpr{j},'Color',color(j),'Marker',marker(j));
+end
+hold off;
+title('ROC curve');
+xlabel(' False Positive Ratio ');
+ylabel('True Positive Ratio ');
+legend('Lying','Lie-to-sit','Sit- to-lie','Sitting','Sit-to-stand','Stand-to-sit',...
+              'Standing','Walking','Location','NorthEastOutside');
+          
+statStruct.Auc = auc;
+auc = cell2mat(auc);
+statStruct.mAuc = mean(auc);
+statStruct.stAuc = std(auc);
 

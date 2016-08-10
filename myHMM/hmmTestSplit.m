@@ -4,6 +4,7 @@ function outTesting = hmmTestSplit(curExp, learnedParams)
 % [fwbkProbs,pOfObservations] = hmmFwBkDaysSplit(curExp.modelInfo, learnedParams, curExp.testFeatMat);
 action_mhmm = learnedParams;
 inferedLabels = [];
+loglik_all = [];
 for i=1:length(curExp.testSet)
     loglik = [];
     for act=1:length(learnedParams)%
@@ -15,11 +16,13 @@ for i=1:length(curExp.testSet)
     [C,Index]=max(loglik);
     
     inferedLabels = [inferedLabels Index];
+    loglik_all(i,:) = loglik;
     
 end
 
 outTesting.inferedLabels = inferedLabels;
-outTesting.loglik = loglik;
+outTesting.loglik = loglik_all;
+
 
 trueLabels = [];
 for i=1:length(curExp.testSet)

@@ -40,12 +40,12 @@ for k=1:gap:size(tmpData,2)
                 Sample{sam_idx}.Hz = (win-1)/(tmpTime(k+win-1)-tmpTime(k));
 
                 % Data
-                if  strcmp(varargin{1},'fft')  
-                    Sample{sam_idx}.Data = data2fft(tmpData(:,k:k+win-1));
-                elseif strcmp(varargin{1},'k-means') 
-                    Sample{sam_idx}.Data = data2kmeans(tmpData(:,k:k+win-1),int32(varargin{2}))';
-                else
+                if nargin == 4
                     Sample{sam_idx}.Data = tmpData(:,k:k+win-1); 
+                elseif nargin  > 4 && strcmp(varargin{1},'fft')
+                    Sample{sam_idx}.Data = data2fft(tmpData(:,k:k+win-1));
+                elseif nargin  > 4 && strcmp(varargin{1},'k-means')
+                    Sample{sam_idx}.Data = data2kmeans(tmpData(:,k:k+win-1),int32(varargin{2}))';
                 end
                 %Sample{sam_idx}.Data = tmpData(:,k:k+win-1);        
 
