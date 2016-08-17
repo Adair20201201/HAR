@@ -1,9 +1,11 @@
-function Sample = SegData(label_file,data_file,win,gap)
+%function Sample = SegData(label_file,data_file,win,gap)
+function Sample = SegData(label_file,data_file,win,gap,varargin)
 % Sample = SegData(label_file,data_file,win,gap)
 % label_file - labels.xls file (e.g. 1.xls)
 % data_file - rawData.txt file (e.g. 1.txt)
 % winSize - Window Size for each segment (e.g. =30 points)
 % gap -  the gap between two windows (e.g. =15 points)
+%
 
 % Label Matrix
 A=dlmread(label_file);
@@ -38,7 +40,14 @@ for k=1:gap:size(tmpData,2)
                 Sample{sam_idx}.Hz = (win-1)/(tmpTime(k+win-1)-tmpTime(k));
 
                 % Data
-                Sample{sam_idx}.Data = tmpData(:,k:k+win-1);        
+                if nargin == 4
+                    Sample{sam_idx}.Data = tmpData(:,k:k+win-1); 
+                elseif nargin  > 4 && strcmp(varargin{1},'fft')
+                    Sample{sam_idx}.Data = data2fft(tmpData(:,k:k+win-1));
+                elseif nargin  > 4 && strcmp(varargin{1},'k-means')
+                    Sample{sam_idx}.Data = data2kmeans(tmpData(:,k:k+win-1),int32(varargin{2}))';
+                end
+                %Sample{sam_idx}.Data = tmpData(:,k:k+win-1);        
 
                 %Label
                 Sample{sam_idx}.Label = label_mat(Sample{sam_idx}.Time);
