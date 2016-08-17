@@ -60,14 +60,14 @@ for k=1:2
                 %scatter(location(1,:),location(2,:),[],color(label),markertype(label));
                 if ~isempty(last_location)
                     scatter(last_location(1,:), last_location(2,:),[], ... 
-                        'w',last_mark);
+                        'w',last_mark   );
                 end
                 scatter(location(1,:),location(2,:),[],'r',markertype(label));
                 title(['Time: ' num2str(Samples{i}.Time) ' (' num2str(i) ')    Action: ' cell2mat(Action_name(label)) ' (' num2str(label) ')'])
                 last_location = location;
                 last_mark= markertype(label);
                 pause;  
-            end
+             end
             hold off;
         end
         
