@@ -2,13 +2,13 @@ clear all
 close all
 %clc
 %projectDir =  'G:\ActionDataColection\ActionData\0716';
-projectDir =  'G:\HAR';
+%projectDir =  'G:\HAR';
 %projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)';
-%projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/HAR(20160727)';
+projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/HAR(20160727)';
 cd(projectDir);
 %DataDir='./SensorData_labeled/Tan/';
-DataDir = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\';
-%DataDir='/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)/SensorData_labeled/Tan/';
+%DataDir = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\';
+DataDir='/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)/SensorData_labeled/Tan/';
 filetype='.csv';
 %filetype='.xls';
 files = dir([DataDir '*' filetype]);
@@ -53,7 +53,7 @@ for k=1:2
     for i=1:length(DataIdx)
         label_file=[DataDir num2str(DataIdx(i)) filetype];
         data_file=[DataDir num2str(DataIdx(i)) '.txt'];
-<<<<<<< HEAD
+        
         Samples = SegData(label_file,data_file,win,gap);
         
         %fprintf('label_file = %s\n', label_file);
@@ -85,12 +85,11 @@ for k=1:2
             hold off;
         end
         
-=======
         %Samples = SegData(label_file,data_file,win,gap);
         %Samples = SegData(label_file,data_file,win,gap,'k-means',5);
         Samples = SegData(label_file,data_file,win,gap,'fft');
         save Samples Samples;
->>>>>>> a066b34a981c5bf9e97dc417ced865016a127b98
+
         if i~=k % Training DataSet            
             TrainSet = [TrainSet Samples];
         else % Testing DataSet
