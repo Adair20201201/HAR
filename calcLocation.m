@@ -8,7 +8,7 @@ nodenum=a1/chlnum;%num of nodes;
 time_p=b1;%num of sample time point
 
 Win=15;%Time window to cal ave
-step=5;
+step=1;
 
 %%%%%%%%%%%%%% Remove empty 0
 for i_node=1:nodenum

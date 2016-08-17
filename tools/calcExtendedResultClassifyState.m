@@ -1,32 +1,35 @@
-function [statStruct] = calcExtendedResult(ModelName, ModelOutput)
+function [statStruct] = calcExtendedResultClassifyState(ModelName, ModelOutput)
 
 %ModelOutput = outputHMM
 
-trueLabels = []; % all true labels
-inferedLabels = []; % all infered labels
+trueState = []; % all true labels
+inferedState = []; % all infered labels
 predict_loglik = []; % all predict loglik
 
 for i=1:length(ModelOutput) %number of cross validations
-    this_trueLabels = ModelOutput{i}.testing.trueLabels; % for this cross valication
-    this_inferedLabels = ModelOutput{i}.testing.inferedLabels;
+    this_trueState = ModelOutput{i}.testing.trueState; % for this cross valication
+    this_inferedState = ModelOutput{i}.testing.inferedState;
     if isfield(ModelOutput{i}.testing,'loglik')
         this_predict_loglik = ModelOutput{i}.testing.loglik;
     end
     
     
     % Precisio/Recall/Accuracy
-    tempPrec(i) = calcPrecision(this_trueLabels, this_inferedLabels);
-    tempRec(i) = calcRecall(this_trueLabels, this_inferedLabels);
-    tempAcc(i) = calcTimeSliceAccuracy(this_trueLabels, this_inferedLabels);
+    tempPrec(i) = calcPrecision(this_trueState, this_inferedState);
+    tempRec(i) = calcRecall(this_trueState, this_inferedState);
+    tempAcc(i) = calcTimeSliceAccuracy(this_trueState, this_inferedState);
     
     % all true labels/all infered labels
-    trueLabels = [trueLabels this_trueLabels];
-    inferedLabels = [inferedLabels this_inferedLabels];
-    predict_loglik = [predict_loglik;this_predict_loglik];
+    trueState = [trueState this_trueState];
+    inferedState = [inferedState this_inferedState];
+    if isfield(ModelOutput{i}.testing,'loglik')
+        predict_loglik = [predict_loglik;this_predict_loglik];
+    end
+    
 end
 
 %%% Confusion Matrix
-modelConfMat = calcConfMat(trueLabels', inferedLabels');
+modelConfMat = calcConfMat(trueState', inferedState');
 statStruct.ConfMat = modelConfMat;
 
 statStruct.Prec = mean(tempPrec);
@@ -38,9 +41,9 @@ statStruct.stdAcc = std(tempAcc);
 
 %%% Calculate and Visualize ROC and AUC
 if isfield(ModelOutput{i}.testing,'loglik')
-    [tpr,fpr,auc] = calcROC_AUC(trueLabels', predict_loglik');
-    color = ['y','m','c','r','g','b','w','k'];
-    marker = ['+','*','x','s','^','p','h','d'];
+    [tpr,fpr,auc] = calcROC_AUC(trueState', predict_loglik');
+    color = ['y','m'];
+    marker = ['+','*'];
 
     figure; 
     hold on;
@@ -51,8 +54,8 @@ if isfield(ModelOutput{i}.testing,'loglik')
     title('ROC curve');
     xlabel(' False Positive Ratio ');
     ylabel('True Positive Ratio ');
-    legend('Lying','Lie-to-sit','Sit- to-lie','Sitting','Sit-to-stand','Stand-to-sit',...
-                  'Standing','Walking','Location','NorthEastOutside');
+    legend('Walking','Others','Location','NorthEastOutside');
+    %legend('stationary','active','Location','NorthEastOutside');
 
     statStruct.Auc = auc;
     auc = cell2mat(auc);

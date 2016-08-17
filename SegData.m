@@ -45,7 +45,7 @@ for k=1:gap:size(tmpData,2)
                 elseif nargin  > 4 && strcmp(varargin{1},'fft')
                     Sample{sam_idx}.Data = data2fft(tmpData(:,k:k+win-1));
                 elseif nargin  > 4 && strcmp(varargin{1},'k-means')
-                    Sample{sam_idx}.Data = data2kmeans(tmpData(:,k:k+win-1),int32(varargin{2}))';
+                    Sample{sam_idx}.Data = data2kmeans(tmpData(:,k:k+win-1),varargin{2});
                 end
                 %Sample{sam_idx}.Data = tmpData(:,k:k+win-1);        
 
@@ -55,8 +55,21 @@ for k=1:gap:size(tmpData,2)
                 % Location
                 Sample{sam_idx}.Location = calcLocation(tmpData(:,k:k+win-1));
                 
-                % Increas sample index
+                % Action state(stational or active)
+                if label_mat(Sample{sam_idx}.Time) == 8
+                     Sample{sam_idx}.State = 1; % Walking activities
+                else
+                    Sample{sam_idx}.State = 2; % Other activities
+                end
+%                 if ismember( label_mat(Sample{sam_idx}.Time),[1 4 7])
+%                      Sample{sam_idx}.State = 1; % stationary activities
+%                 else
+%                     Sample{sam_idx}.State = 2; % active activities
+%                 end
+                
+                % Increas sample index                
                 sam_idx=sam_idx+1;
+                
         end
 
     end
