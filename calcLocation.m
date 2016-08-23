@@ -1,4 +1,4 @@
-function Location = calcLocation(Data)
+function [Location, Theld_STE3] = calcLocation(Data)
 % clear all
 % close all
 % load tmp
@@ -176,6 +176,8 @@ Theld_STE2=zeros(chlnum,nodenum);
 for i_node=1:nodenum
     Theld_STE2(:,i_node)=max(node(i_node).STE(1:chlnum,:),[],2);
 end
+
+Theld_STE3=max(Theld_STE2,[],1); % max of each node;
 
 Mea2=999*ones(2,size(node(1).Mea,2));
 for t=1:size(node(1).Mea,2)

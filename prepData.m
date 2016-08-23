@@ -1,4 +1,4 @@
-clear all
+%clear all
 close all
 %clc
 %projectDir =  'G:\ActionDataColection\ActionData\0716';
@@ -16,7 +16,8 @@ files = dir([DataDir '*' filetype]);
 file_num = size(files,1);
 %DataIdx=1:file_num;
 %DataIdx=1:3; % Just for testing
-DataIdx=1:2; % Just for testing
+%DataIdx=1:2; % Just for testing
+DataIdx=2; % Just for testing
 
 %%%%%%% Action Type %%%%%%%%%%%%%%%%%%
 Action_name = cell(1,8);
@@ -51,35 +52,88 @@ for k=1:2
     %%%%%%%%% Add Features %%%%%%%%%%%%%
     %%
     for i=1:length(DataIdx)
-        label_file=[DataDir num2str(DataIdx(i)) filetype];
+        %label_file=[DataDir num2str(DataIdx(i)) filetype];
         data_file=[DataDir num2str(DataIdx(i)) '.txt'];
+        mp4_file=[DataDir num2str(DataIdx(i)) '.mp4'];
+        label_file_new = [DataDir num2str(DataIdx(i)) '_new' filetype];% new label file
+        label_file_new2 = [DataDir num2str(DataIdx(i)) '_new2' filetype];% new label file
         
-        Samples = SegData(label_file,data_file,win,gap);
-        
-        %fprintf('label_file = %s\n', label_file);
         fprintf('open ''%s''\n', label_file);
-        %fprintf('data_file = %s\n', data_file);
+        fprintf('open "%s"\n', mp4_file);
+        
+        %Samples = SegData(label_file,data_file,win,gap);
+        Samples = SegData(data_file,win,gap);
+        
+        % Create the label file %        
+        tmp_label_file = [];
+        for i = 1:length(Samples)
+            tmp_label_file = [tmp_label_file; Samples{i}.Time Samples{i}.Speed];            
+        end
+        dlmwrite(label_file_new, tmp_label_file, 'delimiter', ';');
+        
+        % Read the label file
+        A = dlmread(label_file_new2);
+        label_mat = A(:,3);
+        for i = 1:length(Samples)
+            Samples{i}.Label = label_mat(i);
+        end
+        
+       save Samples Samples;
+        
+       fprintf('cd "%s"\n', DataDir);
+       
+       if 1
+           figure(1);
+           hold on
+           STE_tmp = [];
+           for i = 1:length(Samples)
+               STE_tmp = [STE_tmp Samples{i}.STE'];
+           end
+           
+           for j=1:5
+               plot(STE_tmp(j,:));
+           end
+           set(gca,'XTick',[5:5:length(Samples)]) %改变x轴坐标间隔显示 这里间隔为2
+           legend('PIR1','PIR2','PIR3','PIR4','PIR5')
+       end
         
         if 1
-            color = ['y','m','c','r','g','b','r','k'];
-            markertype = ['+','*','x','s','o','p','h','>'];
-            figure;
+            %color = ['y','m','c','r','g','b','r','k'];
+            %markertype = ['+','*','x','s','o','p','h','>'];
+            figure(2);
             hold on;
             axis([-4 4 -4 4])
             last_location = [];
             last_mark = [];
+            last_location_mean = [];
             for i = 1:length(Samples)
-                location = Samples{i}.Location;
-                label = Samples{i}.Label;                
-                %scatter(location(1,:),location(2,:),[],color(label),markertype(label));
-                if ~isempty(last_location)
-                    scatter(last_location(1,:), last_location(2,:),[], ... 
-                        'w',last_mark);
+                location = Samples{i}.Location
+                speed = Samples{i}.Speed
+                label = Samples{i}.Label;
+                PF = Samples{i}.PF;
+
+                if i>1
+                    scatter(last_location(1,:),last_location(2,:),[],'w','o');
+                    plot(last_PF(1),last_PF(2),'w+','markersize',20,'linewidth',2);
                 end
-                scatter(location(1,:),location(2,:),[],'r',markertype(label));
-                title(['Time: ' num2str(Samples{i}.Time) ' (' num2str(i) ')    Action: ' cell2mat(Action_name(label)) ' (' num2str(label) ')'])
-                last_location = location;
-                last_mark= markertype(label);
+                
+                if speed>0
+                    scatter(location(1,:),location(2,:),[],'r','o');
+                    plot(PF(1),PF(2),'m+','markersize',20,'linewidth',2);
+               else
+                    plot(PF(1),PF(2),'k+','markersize',20,'linewidth',2);
+                end
+                
+                if label > 0                    
+                    title(['Samples:\{' num2str(i) '\}' '   Time: ' num2str(Samples{i}.Time)...
+                        '    Action: ' cell2mat(Action_name(label)) ' (' num2str(label) ')' '   Speed: '  num2str(speed) ])
+                else
+                    title(['Samples:\{' num2str(i) '\}' '   Time: ' num2str(Samples{i}.Time)...
+                        '    Action: Null' '   Speed: '  num2str(speed) ])
+                end
+
+                 last_location = location;
+                 last_PF = PF;
                 pause;  
             end
             hold off;
@@ -87,8 +141,8 @@ for k=1:2
         
         %Samples = SegData(label_file,data_file,win,gap);
         %Samples = SegData(label_file,data_file,win,gap,'k-means',5);
-        Samples = SegData(label_file,data_file,win,gap,'fft');
-        save Samples Samples;
+        %Samples = SegData(label_file,data_file,win,gap,'fft');
+        %save Samples Samples;
 
         if i~=k % Training DataSet            
             TrainSet = [TrainSet Samples];
