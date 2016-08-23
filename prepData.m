@@ -28,6 +28,7 @@ Action_name(5) = {'Sit-to-stand'};
 Action_name(6) = {'Stand-to-sit'};
 Action_name(7) = {'Standing'};
 Action_name(8) = {'Walking'};
+ 
 %%%%%%% Load Data %%%%%%%%%%%%%%%%%%%%%
 win = 30;
 gap = 15;
@@ -52,10 +53,20 @@ for k=1:2
     for i=1:length(DataIdx)
         label_file=[DataDir num2str(DataIdx(i)) filetype];
         data_file=[DataDir num2str(DataIdx(i)) '.txt'];
+ 
         Samples = SegData(label_file,data_file,win,gap);
         %fprintf('label_file = %s\n', label_file);
         fprintf('open ''%s''\n', label_file);
         %fprintf('data_file = %s\n', data_file);
+ 
+        
+        Samples = SegData(label_file,data_file,win,gap);
+        
+        %fprintf('label_file = %s\n', label_file);
+        fprintf('open ''%s''\n', label_file);
+        %fprintf('data_file = %s\n', data_file);
+        
+ 
         if 1
             color = ['y','m','c','r','g','b','r','k'];
             markertype = ['+','*','x','s','o','p','h','>'];
@@ -80,12 +91,14 @@ for k=1:2
             end
             hold off;
         end
+ 
         %Samples = SegData(label_file,data_file,win,gap);
 		%clusterNum = 5;
 		%centroid = calcuCentroid(win,gap,clusterNum,projectDir,DataDir);
         %Samples = SegData(label_file,data_file,win,gap,'k-means',5);
         Samples = SegData(label_file,data_file,win,gap,'fft');
         save Samples Samples;
+
         if i~=k % Training DataSet            
             TrainSet = [TrainSet Samples];
         else % Testing DataSet
@@ -142,13 +155,13 @@ end
 %%
 
 if (exist('outputNB'))
-    for i = 1：size(outputNB,1)
+    for i = 1:size(outputNB,1)
         res.statNB{i} = calcExtendedResult('nb', outputNB(i,:));
     end
 end
 
 if (exist('outputHMM'))
-    for i =:1：size(outputHMM,1)
+    for i =1:size(outputHMM,1)
         res.statHMM{i} = calcExtendedResult('hmm', outputHMM(i,:));
     end
 end
