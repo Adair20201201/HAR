@@ -33,19 +33,41 @@ for k=1:length(DataIdx)
      
     %%%%%%%%% Add Features %%%%%%%%%%%%%
     %%
-    for i=1:length(DataIdx)
+    for j=1:length(DataIdx)
         Samples = [];
         label_file = [];
         data_file = [];
-        label_file=[DataDir num2str(DataIdx(i)) filetype];
-        data_file=[DataDir num2str(DataIdx(i)) '.txt'];
+        
+        data_file=[DataDir num2str(DataIdx(j)) '.txt'];
+        label_file_new2 = [DataDir num2str(DataIdx(j)) '_new2' filetype];% new label file
+        
         %Samples = SegData(label_file,data_file,win,gap);
 %         clusterNum = 5;
 %         centroid = calcuCentroid(win,gap,clusterNum,projectDir,DataDir);
 %         Samples = SegData(label_file,data_file,win,gap,'k-means',centroid);
-        Samples = SegData(label_file,data_file,win,gap,'fft');
+        Samples = SegData(data_file,win,gap,'fft');
+               
+        % Read the label file
+        fprintf('Read "%s"\n', label_file_new2);
+        A = dlmread(label_file_new2);
+        label_mat = A(:,3);
+        for i = 1:length(Samples) 
+            if label_mat(i) > 0
+                Samples{i}.Label = label_mat(i);
+                if label_mat(i) == 8  % Walking vs others
+                    Samples{i}.State = 1;
+                else
+                     Samples{i}.State = 2;
+                end
+            else
+                Samples{i} = [];
+            end
+        end
+        Samples(cellfun('isempty',Samples)) = []; % Remove the Samples whose labels are zeros
+        
+        
         %save Samples Samples;
-        if i~=k % Training DataSet            
+        if j~=k % Training DataSet            
             TrainSet = [TrainSet Samples];
         else % Testing DataSet
             TestSet = [TestSet Samples];
@@ -81,21 +103,21 @@ for k=1:length(DataIdx)
         curExp.testSet = conf{i,1}.testSet;
         %%%%%%%%%%% Algorithms %%%%%%%%%%
          
-        disp('Training and Testing HMM');
-        curExp. try_HMM = 2; %differebt initial values
-        curExp.M = 2; %Number of mixtures (array)
-        curExp.Q = 8; %Number of states (array)
-        curExp.MAX_ITER = 10;%Max Iteration for HMM
-        curExp.cov_type = 'diag';
-        outputHMM{i,k} = TrainTestClassify('hmm', curExp);
-        %index = index+1;
+%         disp('Training and Testing HMM');
+%         curExp. try_HMM = 2; %differebt initial values
+%         curExp.M = 2; %Number of mixtures (array)
+%         curExp.Q = 8; %Number of states (array)
+%         curExp.MAX_ITER = 10;%Max Iteration for HMM
+%         curExp.cov_type = 'diag';
+%         outputHMM{i,k} = TrainTestClassify('hmm', curExp);
+%         %index = index+1;
 %         
-%         disp('Training and Testing  Neural Network');
-%         outputNN{i,k} = TrainTestClassify('nn', curExp);
-%         
-%         disp('Training and Testing  SVM');
-%         outputSVM{i,k} = TrainTestClassify('svm', curExp);
-%         
+        disp('Training and Testing  Neural Network');
+        outputNN{i,k} = TrainTestClassify('nn', curExp);
+        
+        disp('Training and Testing  SVM');
+        outputSVM{i,k} = TrainTestClassify('svm', curExp);
+        
     end
     
 end

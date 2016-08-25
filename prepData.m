@@ -2,13 +2,13 @@ clear all
 close all
 %clc
 %projectDir =  'G:\ActionDataColection\ActionData\0716';
-%projectDir =  'G:\HAR';
+projectDir =  'G:\HAR';
 %projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)';
-projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/HAR(20160727)';
+%projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/HAR(20160727)';
 cd(projectDir);
 %DataDir='./SensorData_labeled/Tan/';
-%DataDir = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\';
-DataDir='/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)/SensorData_labeled/Tan/';
+DataDir = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\';
+%DataDir='/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)/SensorData_labeled/Tan/';
 filetype='.csv';
 %filetype='.xls';
 files = dir([DataDir '*' filetype]);
@@ -16,6 +16,7 @@ files = dir([DataDir '*' filetype]);
 file_num = size(files,1);
 %DataIdx=1:file_num;
 %DataIdx=1:3; % Just for testing
+%DataIdx=1:2; % Just for testing
 DataIdx=1:2; % Just for testing
 
 %%%%%%% Action Type %%%%%%%%%%%%%%%%%%
@@ -50,56 +51,110 @@ for k=1:2
     
     %%%%%%%%% Add Features %%%%%%%%%%%%%
     %%
-    for i=1:length(DataIdx)
-        label_file=[DataDir num2str(DataIdx(i)) filetype];
-        data_file=[DataDir num2str(DataIdx(i)) '.txt'];
- 
-        Samples = SegData(label_file,data_file,win,gap);
-        %fprintf('label_file = %s\n', label_file);
-        fprintf('open ''%s''\n', label_file);
-        %fprintf('data_file = %s\n', data_file);
- 
+    for j=1:length(DataIdx)
+        %label_file=[DataDir num2str(DataIdx(i)) filetype];
+        data_file=[DataDir num2str(DataIdx(j)) '.txt'];
+        mp4_file=[DataDir num2str(DataIdx(j)) '.mp4'];
+        label_file_new = [DataDir num2str(DataIdx(j)) '_new' filetype];% new label file
+        label_file_new2 = [DataDir num2str(DataIdx(j)) '_new2' filetype];% new label file
         
-        Samples = SegData(label_file,data_file,win,gap);
+        fprintf('open ''%s''\n', label_file_new);
+        fprintf('open "%s"\n', mp4_file);
         
-        %fprintf('label_file = %s\n', label_file);
-        fprintf('open ''%s''\n', label_file);
-        %fprintf('data_file = %s\n', data_file);
+%         Samples = SegData(data_file,win,gap,'fft');
+        Samples = SegData(data_file,win,gap);
+% 		clusterNum = 5;
+% 		centroid = calcuCentroid(win,gap,clusterNum,projectDir,DataDir);
+%         Samples = SegData(data_file,win,gap,'k-means',centroid);
         
- 
-        if 1
-            color = ['y','m','c','r','g','b','r','k'];
-            markertype = ['+','*','x','s','o','p','h','>'];
-            figure;
-            hold on;
-            axis([-4 4 -4 4])
-            last_location = [];
-            last_mark = [];
-            for i = 1:length(Samples)
-                location = Samples{i}.Location;
-                label = Samples{i}.Label;                
-                %scatter(location(1,:),location(2,:),[],color(label),markertype(label));
-                if ~isempty(last_location)
-                    scatter(last_location(1,:), last_location(2,:),[], ... 
-                        'w',last_mark);
-                end
-                scatter(location(1,:),location(2,:),[],'r',markertype(label));
-                title(['Time: ' num2str(Samples{i}.Time) ' (' num2str(i) ')    Action: ' cell2mat(Action_name(label)) ' (' num2str(label) ')'])
-                last_location = location;
-                last_mark= markertype(label);
-                pause;  
-            end
-            hold off;
+        % Create the label file %        
+        tmp_label_file = [];
+        for i = 1:length(Samples)
+            tmp_label_file = [tmp_label_file; Samples{i}.Time Samples{i}.Speed];            
         end
- 
-        %Samples = SegData(label_file,data_file,win,gap);
-		%clusterNum = 5;
-		%centroid = calcuCentroid(win,gap,clusterNum,projectDir,DataDir);
-        %Samples = SegData(label_file,data_file,win,gap,'k-means',5);
-        Samples = SegData(label_file,data_file,win,gap,'fft');
-        save Samples Samples;
+        dlmwrite(label_file_new, tmp_label_file);
+        
+        % Read the label file
+        fprintf('Read "%s"\n', label_file_new2);
+        A = dlmread(label_file_new2);
+        label_mat = A(:,3);
+        for i = 1:length(Samples) 
+            if label_mat(i) > 0
+                Samples{i}.Label = label_mat(i);
+            else
+                Samples{i} = [];
+            end
+        end
+        Samples(cellfun('isempty',Samples)) = []; % Remove the Samples whose labels are zeros
+        
+%         
+%        fprintf('cd "%s"\n', DataDir);
+%        
+%        if 1
+%            figure(1);
+%            hold on
+%            STE_tmp = [];
+%            for i = 1:length(Samples)
+%                STE_tmp = [STE_tmp Samples{i}.STE'];
+%            end
+%            
+%            for j=1:5
+%                plot(STE_tmp(j,:));
+%            end
+%            set(gca,'XTick',[5:5:length(Samples)]) %
+%            legend('PIR1','PIR2','PIR3','PIR4','PIR5')
+%        end
+%         
+%  
+%         if 1
+%             %color = ['y','m','c','r','g','b','r','k'];
+%             %markertype = ['+','*','x','s','o','p','h','>'];
+%             figure(2);
+%             hold on;
+%             axis([-4 4 -4 4])
+%             last_location = [];
+%             last_mark = [];
+%             last_location_mean = [];
+%             for i = 1:length(Samples)
+%                 location = Samples{i}.Location
+%                 speed = Samples{i}.Speed
+%                 label = Samples{i}.Label;
+%                 PF = Samples{i}.PF;
+%                 
+% 
+%                 if i>1 && ~isempty(last_location)
+%                     scatter(last_location(1,:),last_location(2,:),[],'w','o');
+%                 end
+%                 
+%                 if i>1 && ~isempty(last_PF)
+%                     plot(last_PF(1),last_PF(2),'w+','markersize',20,'linewidth',2);
+%                 end
+%                 
+%                 if speed>0
+%                     scatter(location(1,:),location(2,:),[],'r','o');
+%                     plot(PF(1),PF(2),'m+','markersize',20,'linewidth',2);
+%                 elseif speed == 0 && ~isempty(PF)
+%                     plot(PF(1),PF(2),'k+','markersize',20,'linewidth',2);
+%                 end
+%                 
+%                 if label > 0                    
+%                     title(['Samples:\{' num2str(i) '\}' '   Time: ' num2str(Samples{i}.Time)...
+%                         '    Action: ' cell2mat(Action_name(label)) ' (' num2str(label) ')' '   Speed: '  num2str(speed) ])
+%                 else
+%                     title(['Samples:\{' num2str(i) '\}' '   Time: ' num2str(Samples{i}.Time)...
+%                         '    Action: Null' '   Speed: '  num2str(speed) ])
+%                 end
+% 
+%                  last_location = location;
+%                  last_PF = PF;
+%                 pause;  
+%             end
+%             hold off;
+%         end
+%  
 
-        if i~=k % Training DataSet            
+
+        if j~=k % Training DataSet            
             TrainSet = [TrainSet Samples];
         else % Testing DataSet
             TestSet = [TestSet Samples];
@@ -117,8 +172,7 @@ for k=1:2
 %     for i=1:length(DataIdx)
 %         label_file=[DataDir num2str(DataIdx(i)) filetype];
 %         data_file=[DataDir num2str(DataIdx(i)) '.txt'];
-%         %Samples = SegData(label_file,data_file,win,gap);
-%         Samples = SegData(label_file,data_file,win,gap,'k-means',5);
+%         Samples = SegData(label_file,data_file,win,gap);
 %         %Samples = SegData(label_file,data_file,win,gap,'fft');
 %         if i~=k % Training DataSet            
 %             TrainSet = [TrainSet Samples];
@@ -130,26 +184,29 @@ for k=1:2
 %     conf{2,1}.trainSet = TrainSet;
 %     conf{2,1}.testSet = TestSet;
 %     
-    
+
+
     for i = 1:size(conf,1)
         curExp.trainSet = conf{i,1}.trainSet;
         curExp.testSet = conf{i,1}.testSet;
         %%%%%%%%%%% Algorithms %%%%%%%%%%
-        disp('Training and Testing NB');
-        outputNB{i,k} = TrainTestSplit('nb', curExp);
-         
-%         disp('Training and Testing HMM');
-%         curExp. try_HMM = 2; %differebt initial values
-%         curExp.M = 2; %Number of mixtures (array)
-%         curExp.Q = 4; %Number of states (array)
-%         curExp.MAX_ITER = 5;%Max Iteration for HMM
-%         curExp.cov_type = 'diag';
-%         outputHMM{i,k} = TrainTestSplit('hmm', curExp);
-%         %index = index+1;
-        
+%         disp('Training and Testing NB');
+%         outputNB{i,k} = TrainTestSplit('nb', curExp);
+
+        disp('Training and Testing HMM');
+        curExp. try_HMM = 2; %differebt initial values
+        curExp.M = 2; %Number of mixtures (array)
+        curExp.Q = 4; %Number of states (array)
+        curExp.MAX_ITER = 5;%Max Iteration for HMM
+        curExp.cov_type = 'diag';
+        outputHMM{i,k} = TrainTestSplit('hmm', curExp);
+        %index = index+1;
+
     end
-    
+
 end
+
+
 
 %%%%%%% Results %%%%%%%%%%%%%%%%%%%%%
 %%

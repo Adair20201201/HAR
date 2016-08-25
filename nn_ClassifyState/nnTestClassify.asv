@@ -1,4 +1,0 @@
-function outTesting = nnTestClassify(curExp, net)
-for i=1:length(curExp.testSet)
-    outputs = net(curExp.testSet{i}.Data');
-end
