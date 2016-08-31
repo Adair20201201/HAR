@@ -22,12 +22,17 @@ for i=1:length(ModelOutput) %number of cross validations
     % all true labels/all infered labels
     trueLabels = [trueLabels this_trueLabels];
     inferedLabels = [inferedLabels this_inferedLabels];
-    predict_loglik = [predict_loglik;this_predict_loglik];
+    if isfield(ModelOutput{i}.testing,'loglik')
+        predict_loglik = [predict_loglik;this_predict_loglik];
+    end
 end
 
 %%% Confusion Matrix
-modelConfMat = calcConfMat(trueLabels', inferedLabels');
+modelConfMat = calcConfMat(trueLabels', inferedLabels')
+
 statStruct.ConfMat = modelConfMat;
+
+save modelConfMat modelConfMat;
 
 statStruct.Prec = mean(tempPrec);
 statStruct.stdPrec = std(tempPrec);

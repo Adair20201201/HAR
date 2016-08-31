@@ -1,0 +1,22 @@
+function outTesting = rfTrainSplit(curExp, learnedParams)
+% outTesting.inferedLabels: Labels inferred by the algorithm
+% outTesting.trueLabels: True Labels of the Samples
+
+B = learnedParams;
+
+inferedLabels = [];
+for i = 1:length(curExp.testSet)
+    pre
+end
+
+
+
+%%%%% Fix Output  %%%%%%
+outTesting.inferedLabels = inferedLabels;
+
+trueLabels = [];
+for i=1:length(curExp.testSet)
+    trueLabels = [trueLabels curExp.testSet{i}.Label];
+end
+
+outTesting.trueLabels = trueLabels;

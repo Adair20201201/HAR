@@ -1,4 +1,4 @@
-clear all
+%clear all
 close all
 %clc
 %projectDir =  'G:\ActionDataColection\ActionData\0716';
@@ -54,12 +54,12 @@ for cross_k=1:2
     for data_j=1:length(DataIdx)
         %label_file=[DataDir num2str(DataIdx(i)) filetype];
         data_file=[DataDir num2str(DataIdx(data_j)) '.txt'];
-        %mp4_file=[DataDir num2str(DataIdx(data_j)) '.mp4'];
+        mp4_file=[DataDir num2str(DataIdx(data_j)) '.mp4'];
         label_file_new = [DataDir num2str(DataIdx(data_j)) '_new' filetype];% new label file
         label_file_new2 = [DataDir num2str(DataIdx(data_j)) '_new2' filetype];% new label file
         
         fprintf('open ''%s''\n', label_file_new);
-        %fprintf('open "%s"\n', mp4_file);
+        fprintf('open "%s"\n', mp4_file);
         
 %         Samples = SegData(data_file,win,gap,'fft');
         Samples = SegData(data_file,win,gap);
@@ -131,7 +131,7 @@ for cross_k=1:2
         conf{1} = [];
         conf{1}.trainSet = TrainSet;
         conf{1}.testSet = TestSet;
-        conf{1}.try_HMM = 2; %differebt initial values
+        conf{1}.try_HMM = 2;
         conf{1}.M = 2; %Number of mixtures (array)
         conf{1}.Q = 4; %Number of states (array)
         conf{1}.MAX_ITER = 5;%Max Iteration for HMM
@@ -140,7 +140,7 @@ for cross_k=1:2
         conf{2} = [];
         conf{2}.trainSet = TrainSet;
         conf{2}.testSet = TestSet;
-        conf{2}.try_HMM = 2; %differebt initial values
+        conf{2}.try_HMM = 2;
         conf{2}.M = 3; %Number of mixtures (array)
         conf{2}.Q = 5; %Number of states (array)
         conf{2}.MAX_ITER = 5;%Max Iteration for HMM
@@ -155,25 +155,15 @@ for cross_k=1:2
             curExp.Q = conf{i}.Q;
             curExp.MAX_ITER = conf{i}.MAX_ITER;
             curExp.cov_type = conf{i}.cov_type;
-        outputHMM{i,cross_k} = TrainTestSplit('hmm', curExp);
+            outputHMM{i,cross_k} = TrainTestSplit('hmm', curExp);
         end
     end
     
-    %%%%%%%%%%%%%%%%%%%%%%%
-    %%%% 3. Random Forest %%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%
-    if 1
-        conf{1} = [];
-        conf{1}.trainSet = TrainSet;
-        conf{1}.testSet = TestSet;
-        conf{1}.nTrees = 20; % #trees in forest
+    %%%%%%%%%%%%%%%%
+    %%%% 3. Random  %%%%%
+    %%%%%%%%%%%%%%%%
+    if 0
         
-        for i = 1:size(conf,1)
-            curExp.trainSet = conf{i}.trainSet;
-            curExp.testSet = conf{i}.testSet;
-            curExp.nTrees = conf{i}.nTrees;
-            outputRF{i,cross_k} = TrainTestSplit('rf', curExp);            
-        end        
     end
 
 end
@@ -190,11 +180,5 @@ end
 if (exist('outputHMM'))
     for i =1:size(outputHMM,1)
         res.statHMM{i} = calcExtendedResult('hmm', outputHMM(i,:));
-    end
-end
-
-if (exist('outputRF'))
-    for i =1:size(outputRF,1)
-        res.statRF{i} = calcExtendedResult('rf', outputRF(i,:));
     end
 end

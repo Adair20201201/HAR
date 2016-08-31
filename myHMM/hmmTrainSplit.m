@@ -3,12 +3,12 @@ function output = hmmTrainSplit(curExp)
 TrainingSet = curExp.trainSet;
 
 % Calculate the num of Actions
-tmpLabels = [];
+classLabels = [];
 for i =1:length(TrainingSet)
-    tmpLabels=[tmpLabels TrainingSet{i}.Label];
+    classLabels=[classLabels TrainingSet{i}.Label];
 end
 
-Labels = unique(tmpLabels); % Find Unique Labels (0 for no action, discarded)
+Labels = unique(classLabels); % Find Unique Labels (0 for no action, discarded)
 ActionType = cell (length(Labels),1);
 
 % Seperate Training Samples into different type
