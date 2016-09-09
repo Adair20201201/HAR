@@ -1,4 +1,4 @@
-clear all
+%clear all
 close all
 %clc
 %projectDir =  'G:\ActionDataColection\ActionData\0716';
@@ -34,12 +34,9 @@ Action_name(8) = {'Walking'};
 win = 30;
 gap = 15;
 
-%index = 1;
-%for k=1:length(DataIdx)
-%conf = cell(2,1);
-conf = cell(1,1);
+%for cross_k=1:length(DataIdx)
 for cross_k=1:2
-    disp(sprintf('Cross Validation : %d', cross_k));
+    disp(sprintf('Cross Validation : %d\n', cross_k));
     
     % cross_k is the Index for testing
 
@@ -116,7 +113,7 @@ for cross_k=1:2
         conf{1}.trainSet = TrainSet;
         conf{1}.testSet = TestSet;
         
-        for i = 1:size(conf,1)
+        for i = 1:length(conf)
             curExp.trainSet = conf{i}.trainSet;
             curExp.testSet = conf{i}.testSet;
             disp('Training and Testing NB');
@@ -131,49 +128,83 @@ for cross_k=1:2
         conf{1} = [];
         conf{1}.trainSet = TrainSet;
         conf{1}.testSet = TestSet;
-        conf{1}.try_HMM = 2; %differebt initial values
-        conf{1}.M = 2; %Number of mixtures (array)
-        conf{1}.Q = 4; %Number of states (array)
-        conf{1}.MAX_ITER = 5;%Max Iteration for HMM
+        conf{1}.try_HMM = 2; % differebt initial values
+        conf{1}.M = 2; % Number of mixtures (array)
+        conf{1}.Q = 4; % Number of states (array)
+        conf{1}.MAX_ITER = 5;% Max Iteration for HMM
         conf{1}.cov_type = 'diag';
         
         conf{2} = [];
         conf{2}.trainSet = TrainSet;
         conf{2}.testSet = TestSet;
-        conf{2}.try_HMM = 2; %differebt initial values
-        conf{2}.M = 3; %Number of mixtures (array)
-        conf{2}.Q = 5; %Number of states (array)
-        conf{2}.MAX_ITER = 5;%Max Iteration for HMM
+        conf{2}.try_HMM = 2; % differebt initial values
+        conf{2}.M = 3; % Number of mixtures (array)
+        conf{2}.Q = 5; % Number of states (array)
+        conf{2}.MAX_ITER = 5;% Max Iteration for HMM
         conf{2}.cov_type = 'diag';
         
-        for i = 1:size(conf,1)
+        for i = 1:length(conf)
             disp('Training and Testing HMM');
             curExp.trainSet = conf{i}.trainSet;
             curExp.testSet = conf{i}.testSet;
-            curExp.try_HMM = conf{i}.M;
+            curExp.try_HMM = conf{i}.try_HMM;
             curExp.M = conf{i}.M;
             curExp.Q = conf{i}.Q;
             curExp.MAX_ITER = conf{i}.MAX_ITER;
             curExp.cov_type = conf{i}.cov_type;
-        outputHMM{i,cross_k} = TrainTestSplit('hmm', curExp);
+            outputHMM{i,cross_k} = TrainTestSplit('hmm', curExp);
         end
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%
     %%%% 3. Random Forest %%%%%
     %%%%%%%%%%%%%%%%%%%%%%%
-    if 1
+    if 0
         conf{1} = [];
         conf{1}.trainSet = TrainSet;
         conf{1}.testSet = TestSet;
         conf{1}.nTrees = 20; % #trees in forest
+
+        conf{2} = [];
+        conf{2}.trainSet = TrainSet;
+        conf{2}.testSet = TestSet;
+        conf{2}.nTrees = 20; % #trees in forest
+        conf{2}.try_HMM = 2; % differebt initial values
+        conf{2}.M = 2; % Number of mixtures (array)
+        conf{2}.Q = 5; % Number of states (array)
+        conf{2}.MAX_ITER = 10;% Max Iteration for HMM
+        conf{2}.cov_type = 'diag';
         
-        for i = 1:size(conf,1)
+        for i = 1:length(conf)
             curExp.trainSet = conf{i}.trainSet;
             curExp.testSet = conf{i}.testSet;
             curExp.nTrees = conf{i}.nTrees;
+            if isfield(conf{i},'try_HMM')
+                curExp.try_HMM = conf{i}.try_HMM;
+                curExp.M = conf{i}.M;
+                curExp.Q = conf{i}.Q;
+                curExp.MAX_ITER = conf{i}.MAX_ITER;
+                curExp.cov_type = conf{i}.cov_type;
+            end
             outputRF{i,cross_k} = TrainTestSplit('rf', curExp);            
         end        
+    end
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%   4. Template Matching(TM)      %%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    if 1
+        conf{1} = [];
+        conf{1}.trainSet = TrainSet;
+        conf{1}.testSet = TestSet;
+        
+        for i = 1:length(conf)
+            curExp.trainSet = conf{i}.trainSet;
+            curExp.testSet = conf{i}.testSet;
+            disp('Training and Testing Template Matching');
+            outputTM{i,cross_k} = TrainTestSplit('template', curExp);
+        end
     end
 
 end
@@ -183,18 +214,27 @@ end
 
 if (exist('outputNB'))
     for i = 1:size(outputNB,1)
-        res.statNB{i} = calcExtendedResult('nb', outputNB(i,:));
+        res.statNB{i} = calcExtendedResult(outputNB(i,:));
     end
 end
 
 if (exist('outputHMM'))
     for i =1:size(outputHMM,1)
-        res.statHMM{i} = calcExtendedResult('hmm', outputHMM(i,:));
+        res.statHMM{i} = calcExtendedResult(outputHMM(i,:));
     end
 end
 
 if (exist('outputRF'))
     for i =1:size(outputRF,1)
-        res.statRF{i} = calcExtendedResult('rf', outputRF(i,:));
+        res.statRF{i} = calcExtendedResult(outputRF(i,:));
     end
+    res.statRF{1}.ConfMat
 end
+
+if (exist('outputTM'))
+    for i =1:size(outputTM,1)
+        res.statTM{i} = calcExtendedResult(outputTM(i,:));
+    end
+    res.statTM{1}.ConfMat
+end
+

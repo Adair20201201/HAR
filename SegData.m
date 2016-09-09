@@ -53,7 +53,7 @@ for k=1:gap:size(tmpData,2)
         %Sample{sam_idx}.Label = label_mat(Sample{sam_idx}.Time);
         
         % Location & STE
-        [Sample{sam_idx}.Location,Sample{sam_idx}.STE] = calcLocation(tmpData(:,k:k+win-1));
+        [Sample{sam_idx}.Location,Sample{sam_idx}.STE, Sample{sam_idx}.Fired] = calcLocation(tmpData(:,k:k+win-1));
         
         % Partical Filter & Speed
         if ~isempty(Sample{sam_idx}.Location)

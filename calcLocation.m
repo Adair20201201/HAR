@@ -1,4 +1,4 @@
-function [Location, Theld_STE3] = calcLocation(Data)
+function [Location, Theld_STE3, Fired] = calcLocation(Data)
 % clear all
 % close all
 % load tmp
@@ -69,7 +69,7 @@ Theld_STE=[
 %%%%%%  Add in 0715  %%%%%%
 for i_node=1:nodenum
     STE=zeros(chlnum+1,floor(time_p/Win));
-    STE2=[];%Every point
+    %STE2=[];%Every point
     idx=1;%index 4 STE
     %Seg_beg=[];%Segmentation beg time
     %Seg_end=[];%Segmentation end time
@@ -78,14 +78,14 @@ for i_node=1:nodenum
         tmp=abs(node(i_node).Voltage(:,t:t+Win-1)-repmat(mean(node(i_node).Voltage(:,t:t+Win-1),2),[1,Win]));
         STE(1:chlnum,idx)=sum(tmp,2)*factor;
         %STE(chlnum+1,idx)=node(i_node).Time(t);%time
-        STE2(1:chlnum,(idx-1)*step+1:idx*step)=repmat(STE(1:chlnum,idx),[1,step]);        
+        %STE2(1:chlnum,(idx-1)*step+1:idx*step)=repmat(STE(1:chlnum,idx),[1,step]);        
         %%%%%%
         idx=idx+1;
     end    
     
     %%%% Compute BIN %%%%
     BIN=[STE(1:chlnum,:)>repmat(Theld_STE(:,i_node),[1,size(STE,2)])];
-    BIN2=[STE2>repmat(Theld_STE(:,i_node),[1,size(STE2,2)])];   
+    %BIN2=[STE2>repmat(Theld_STE(:,i_node),[1,size(STE2,2)])];   
     
     %%%% Compute Circle %%%
     Circle=BIN(1,:)*16+BIN(5,:)*8+BIN(9,:)*4+BIN(3,:)*2+BIN(7,:)*1;
@@ -162,19 +162,22 @@ for i_node=1:nodenum
                  0      2       -2      -2      2];%Location of the PIR nodes
     Mea=[X_pos+Shift(1,i_node);Y_pos+Shift(2,i_node);STE(chlnum+1,:)];
     
-    node(i_node).Win=Win;
-    node(i_node).STE=STE;
-    node(i_node).STE2=STE2;
-    node(i_node).BIN=BIN;
-    node(i_node).BIN2=BIN2;
-    node(i_node).Circle=Circle;
-    node(i_node).Dir=Dir;
-    node(i_node).Mea=Mea;
+    node(i_node).Win = Win;
+    node(i_node).STE = STE;
+    %node(i_node).STE2 = STE2;
+    node(i_node).BIN = BIN;
+    %node(i_node).BIN2 = BIN2;
+    node(i_node).Circle = Circle;
+    node(i_node).Dir = Dir;
+    node(i_node).Mea = Mea;
+    node(i_node).Fired = sum(sum(BIN));
 end
 
 Theld_STE2=zeros(chlnum,nodenum);
+Fired = zeros(1, nodenum);
 for i_node=1:nodenum
     Theld_STE2(:,i_node)=max(node(i_node).STE(1:chlnum,:),[],2);
+    Fired(i_node) = node(i_node).Fired; % Node i is fired;
 end
 
 Theld_STE3=max(Theld_STE2,[],1); % max of each node;
