@@ -1,9 +1,9 @@
 % Add all the directories and subdirectories to you matlab path 
-addpath('G:\HAR\myHMM\');
-addpath('G:\HAR\myRandomForest\');
-addpath('G:\HAR\tools\');
-addpath('G:\HAR\naiveBayes\');
-addpath('G:\HAR\hmm_ClassifyState\');
-addpath('G:\HAR\nn_ClassifyState\');
-addpath('G:\HAR\svm_ClassifyState\');
+addpath('.\myHMM\');
+addpath('.\myRandomForest\');
+addpath('.\tools\');
+addpath('.\naiveBayes\');
+addpath('.\hmm_ClassifyState\');
+addpath('.\nn_ClassifyState\');
+addpath('.\svm_ClassifyState\');
 %addpath('G:\HAR\libsvm-3.21\');
