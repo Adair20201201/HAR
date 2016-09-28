@@ -1,4 +1,4 @@
-function [statStruct] = calcExtendedResult(ModelName, ModelOutput)
+function [statStruct] = calcExtendedResult(ModelOutput)
 
 %ModelOutput = outputHMM
 
@@ -28,11 +28,11 @@ for i=1:length(ModelOutput) %number of cross validations
 end
 
 %%% Confusion Matrix
-modelConfMat = calcConfMat(trueLabels', inferedLabels')
+modelConfMat = calcConfMat(trueLabels', inferedLabels');
 
 statStruct.ConfMat = modelConfMat;
 
-save modelConfMat modelConfMat;
+%save modelConfMat modelConfMat;
 
 statStruct.Prec = mean(tempPrec);
 statStruct.stdPrec = std(tempPrec);

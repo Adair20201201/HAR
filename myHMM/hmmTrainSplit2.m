@@ -1,4 +1,6 @@
-function output = hmmTrainSplit(curExp)
+%function output = hmmTrainSplit2(curExp)
+%%% Train for each activity/each node
+%%% Totally output 8*5 = 40 HMMs
 
 TrainingSet = curExp.trainSet;
 
@@ -51,33 +53,34 @@ for i = 1:length(TrainingSet)
     end
 end
 
+%% Prepare data for each activity/each node
+Dataset = cell(8,5);% row: activity type  ; col: node id
+for i = 1:length(TrainingSet)    
+    tmp_act = TrainingSet{i}.Label;
+    TrainingSet{i}.Fired;
+    for j_node = 1:length(TrainingSet{i}.Fired)
+        if TrainingSet{i}.Fired(j_node) ~= 0
+            tmp_data = TrainingSet{i}.Data((j_node-1)*9+1:j_node*9,:);
+            Dataset{tmp_act,j_node} = [Dataset{tmp_act,j_node};mat2cell(tmp_data,size(tmp_data,1))]; 
+        end
+    end
+end
+
+% Template
+for i = 1:size(Dataset,1) % Activity
+    for j = 1:size(Dataset,2) % Node
+        tmp = []; % Template
+        for k = 1:length(Dataset{i,j})
+            tmp = [tmp;data2fft(Dataset{i,j}{k})];
+        end
+        Act_template{i,j} = mean(tmp,1);
+    end
+end
+
+
+here1122
+
 %%% Training HMM %%%
-<<<<<<< HEAD
-% If some variables are not  existed, take the default variables
-if ~isfield('curExp.try_HMM','var')
-    try_HMM = 2;
-end
-if ~isfield('curExp.M','var')
-    M = 2;
-end
-if ~isfield('curExp.Q','var')
-    Q = 4;
-end
-if ~isfield('curExp.MAX_ITER','var')
-    MAX_ITER = 10;
-end
-if ~isfield('curExp.cov_type','var')
-    cov_type =  'diag';
-end
-
-try_HMM = curExp.try_HMM; %differebt initial values
-M = curExp.M; %Number of mixtures (array)
-Q = curExp.Q; %Number of states (array)
-MAX_ITER = curExp.MAX_ITER;%Max Iteration for HMM
-cov_type = curExp.cov_type;
-
-=======
->>>>>>> 014c15ddd9d2c3355870162fa7a88347ebcf7307
 %rand('state', 5);
 
 for i=1:length(ActionType)

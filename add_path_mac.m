@@ -2,3 +2,4 @@
 % For Mac OS
 addpath('./myRandomForest');
 addpath('./myHMM');
+addpath('./myTemplate');
