@@ -3,3 +3,4 @@
 addpath('./myRandomForest');
 addpath('./myHMM');
 addpath('./myTemplate');
+addpath('./online');

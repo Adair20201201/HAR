@@ -10,7 +10,7 @@ cd(projectDir);
 DataDir = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\';
 %DataDir='/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)/SensorData_labeled/Tan/';
 
-user = 1; % Different user for different setting
+user = 2; % Different user for different setting
 switch user
     case 1 % Luo
         projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/HAR(20160727)';
@@ -23,7 +23,6 @@ switch user
 end
 
 cd(projectDir);
->>>>>>> 014c15ddd9d2c3355870162fa7a88347ebcf7307
 filetype='.csv';
 %filetype='.xls';
 files = dir([DataDir '*' filetype]);
@@ -303,6 +302,7 @@ if (exist('outputRF'))
         res.statRF{i} = calcExtendedResult(outputRF(i,:));
     end
     res.statRF{1}.ConfMat
+    res.statRF{1}.ConfMat2
 end
 
 if (exist('outputTM'))

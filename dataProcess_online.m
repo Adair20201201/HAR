@@ -2,6 +2,14 @@ clear all
 close all
 %pnet('closeall')
 
+user = 2; % Different user for different setting
+switch user
+    case 1 % Luo
+        add_path_mac;
+    case 2
+        add_path;
+end
+
 sock=pnet('tcpsocket',8888);
 unSolvedRawData = [];
 unSolvedData = [];

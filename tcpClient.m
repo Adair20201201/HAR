@@ -1,10 +1,16 @@
 con = pnet('tcpconnect','127.0.0.1',8888);
 
-%raw_txt = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)/SensorData_labeled/Tan/1.txt';
-raw_txt = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\1.txt';
+user = 2; % Different user for different setting
+switch user
+    case 1 % Luo
+        raw_txt = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)/SensorData_labeled/Tan/1.txt';
+        add_path_mac;
+    case 2
+        raw_txt = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\1.txt';
+        add_path;
+end
 
 fid=fopen(raw_txt,'rt');
-
 fid2 = fopen('sendData32_1.txt','a');
 
 while ~feof(fid)
