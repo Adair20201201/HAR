@@ -17,14 +17,29 @@ function Sample = SegData(data_file,win,gap,varargin)
 
 % Data Matrix (Data&Time)
 Output=pre_pocessing_CS2(data_file);
+
 tmpData=Output.Data;
+% Save the data in txt
+if 0
+    fid = fopen('offlineAllData32_1.txt','wt');
+    for i = 1:size(tmpData,1)
+        for j = 1:size(tmpData,2)
+            fprintf(fid,'%f',tmpData(i,j));
+            fprintf(fid,'%c','  ');
+        end
+        fprintf(fid,'%c\n','');
+    end
+end
+
+
 tmpTime=Output.Time;
 
 sam_idx = 1;%sample number
 seg = [];
 Beg_Location = 0;
 for k=1:gap:size(tmpData,2)
-    if (k+win)<size(tmpData,2)
+    %if (k+win)<size(tmpData,2)
+    if (k+win - 1)<= size(tmpData,2)
         % Time (most of the datapoints belong to)
         TimeRange=floor(tmpTime(k:k+win-1));
         table=tabulate(TimeRange);
@@ -32,7 +47,7 @@ for k=1:gap:size(tmpData,2)
         I=find(table(:,2)==F);
         result=table(I,1);
         Sample{sam_idx}.Time=result(1);
-        if Sample{sam_idx}.Time==0
+        if Sample{sam_idx}.Time==0 %% VS online segmentData,the outline maybe less one samples
             continue;
         end
 
@@ -112,3 +127,5 @@ end
 if 0 %verbose Info
     size(tmpData,2)
 end
+
+%fclose(fid);

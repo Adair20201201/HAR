@@ -2,13 +2,13 @@ clear all
 close all
 %clc
 %projectDir =  'G:\ActionDataColection\ActionData\0716';
-%projectDir =  'G:\HAR';
+projectDir =  'G:\HAR';
 %projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)';
-projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/HAR(20160727)';
+%projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/HAR(20160727)';
 cd(projectDir);
 %DataDir='./SensorData_labeled/Tan/';
-%DataDir = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\';
-DataDir='/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)/SensorData_labeled/Tan/';
+DataDir = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\';
+%DataDir='/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)/SensorData_labeled/Tan/';
 filetype='.csv';
 %filetype='.xls';
 files = dir([DataDir '*' filetype]);
@@ -30,6 +30,7 @@ Action_name(6) = {'Stand-to-sit'};
 Action_name(7) = {'Standing'};
 Action_name(8) = {'Walking'};
  
+
 %%%%%%% Load Data %%%%%%%%%%%%%%%%%%%%%
 win = 30;
 gap = 15;
@@ -63,6 +64,26 @@ for cross_k=1:2
         
 %         Samples = SegData(data_file,win,gap,'fft');
         Samples = SegData(data_file,win,gap);
+        
+        % Save Samples in txt
+        if 0
+            fidSamp = fopen('samplesSegment_offline32_1.txt','wt');
+            for i = 1:length(Samples)
+                tmp = Samples{i}.Data;
+                for j = 1:size(tmp,1)
+                    for k = 1:size(tmp,2)
+                        fprintf(fidSamp,'%f',tmp(j,k));
+                        fprintf(fidSamp,'%c','  ');
+                    end
+                    fprintf(fidSamp,'%c\n','');
+                end
+                fprintf(fidSamp,'%c\n','');
+                fprintf(fidSamp,'%c\n','');
+            end
+            fclose(fidSamp);
+            save Samples2 Samples
+        end
+        
 % 		clusterNum = 5;
 % 		centroid = calcuCentroid(win,gap,clusterNum,projectDir,DataDir);
 %         Samples = SegData(data_file,win,gap,'k-means',centroid);
@@ -98,9 +119,17 @@ for cross_k=1:2
         else % Testing DataSet
             TestSet = [TestSet Samples];
         end
+ 
+        % Whetehr there are some Samples which PF are empty 
+        for i = 1:length(Samples)
+            if isempty(Samples{i}.PF)
+                i
+            end
+        end
+        
     end
     
-    if 1
+    if 0
         drawLocation(TrainSet);
     end
     

@@ -21,19 +21,19 @@ end
 
 %%% Training HMM %%%
 % If some variables are not  existed, take the default variables
-if ~exist('curExp.try_HMM','var')
+if ~isfield('curExp.try_HMM','var')
     try_HMM = 2;
 end
-if ~exist('curExp.M','var')
+if ~isfield('curExp.M','var')
     M = 2;
 end
-if ~exist('curExp.Q','var')
+if ~isfield('curExp.Q','var')
     Q = 4;
 end
-if ~exist('curExp.MAX_ITER','var')
+if ~isfield('curExp.MAX_ITER','var')
     MAX_ITER = 10;
 end
-if ~exist('curExp.cov_type','var')
+if ~isfield('curExp.cov_type','var')
     cov_type =  'diag';
 end
 
