@@ -42,7 +42,7 @@ while 1
                 
                 %Output
                  [Output,unSolvedRawData,partMetric] = pre_pocessing_online(data,unSolvedRawData,partMetric);
-                 %[Output,unSolvedRawData,partMetric,lastTransID] = pre_pocessing_online2(data,unSolvedRawData,partMetric,lastTransID);
+            
             else 
                 continue
             end
@@ -92,8 +92,8 @@ while 1
                                     end
   
                                 else
-                                    numDele = numDele + 1
-                                    pause
+                                    numDele = numDele + 1;
+                                    %pause
                                 end
                             end
                         end
@@ -113,7 +113,6 @@ while 1
                 %scatterTrajectory_online(Sample_tmp);
                 
                 % Predict the samples
-                
                 load outputRF
                 inferedLabels = rfPredict_Online(Sample_tmp, outputRF{1,1}.training.learnedParams);
                 Labels = [Labels inferedLabels];

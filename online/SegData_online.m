@@ -1,7 +1,27 @@
 function [Sample,unsolvedData,Beg_Location] = SegData_online(Output,win,gap,unsolvedData,Beg_Location,lastSample,varargin)
-% data_raw - the raw data collect from serial port in raw
-% win - Window Size for each segment (e.g. =30 points)
-% gap -  the gap between two windows (e.g. =15 points)
+% input: Output --- Matrix that each colunm is a message receive from
+%                            sensoes.
+%           win --- Window Size for each segment (e.g. =30 points)
+%           gap ---  the gap between two windows (e.g. =15 points)
+%           unsolvedData --- Matrix that last time didn't be segmented into
+%                                      a sample.
+%           Beg_Location --- Just a flag that means whether the function
+%                                     was the first time be called, 0 for first time 1 for other. 
+%           lastSample --- Sample that the previous time or before this
+%                                  sample.
+%           varargin --- The optional variable, for selecting different or
+%                              transform into different features, sunch as
+%                              fft or k-means.
+%
+% output: Sample --- The samples those have been already segmented and more
+%                                features such as Location, Speed had been
+%                                added.
+%             unsolvedData --- The matrix that haven't been segmented into
+%                                        sample this time, it will combine
+%                                        with next receive matrix.
+%                                       
+%             Beg_Location ---  Just a flag that means whether the function
+%                                     was the first time be called, 0 for first time 1 for other. 
 
 % Data Matrix (Only Data)
     tmpData=Output.Data;
@@ -10,10 +30,6 @@ function [Sample,unsolvedData,Beg_Location] = SegData_online(Output,win,gap,unso
     size(tmpData)
     sam_idx = 2;%sample number
     Sample{1} = lastSample;
-%     if Beg_Location == 0
-%         Sample{1} = [];
-%     end
-%     Sample(cellfun('isempty',Sample)) = [];
     
     seg = [];
 if size(tmpData,2) >= win

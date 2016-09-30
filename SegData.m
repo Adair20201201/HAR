@@ -1,12 +1,11 @@
-%function Sample = SegData(label_file,data_file,win,gap)
-%function Sample = SegData(label_file,data_file,win,gap,varargin)
 function Sample = SegData(data_file,win,gap,varargin)
-% Sample = SegData(label_file,data_file,win,gap)
-% label_file - labels.xls file (e.g. 1.xls)
-% data_file - rawData.txt file (e.g. 1.txt)
-% winSize - Window Size for each segment (e.g. =30 points)
-% gap -  the gap between two windows (e.g. =15 points)
-%
+% input: data_file --- rawData.txt file (e.g. 1.txt)
+%           win --- Window Size for each segment (e.g. =30 points)
+%           gap ---  the gap between two windows (e.g. =15 points)
+%           varargin --- Optional variate for differnt feature, for examples, the 'fft' means calculate the 
+%                              fast Fourier transform and the 'k-means' classify the raw data into k clssification.
+% output : Sample --- The segmented data and other more information like
+%                                PF, Speed and so on.
 
 % % Label Matrix
 % A=dlmread(label_file);

@@ -1,4 +1,15 @@
 function [Output,unSolvedData,partMetric] = pre_pocessing_online(data_raw,unSolvedData,partMetric)
+% input: data_raw --- data received from serial port
+%           unSolvedData --- data that last time didn't deal with and not
+%                                      enough to be a integrated massage.
+%           partMetric --- Vector that last time haven't collect enougth
+%                                 data to constitute a message.
+% output: Output --- Matrix that each column is a message
+%             unSolvedData --- data that this time didn't deal with and not
+%                                      enough to be a integrated massage.
+%             partMetric --- Vector that this time haven't collect enougth
+%                                 data to constitute a message.
+
 %partMetric
 Rows=1:9;% Rows to format the data
 Data=[];

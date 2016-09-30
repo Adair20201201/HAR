@@ -73,7 +73,7 @@ for cross_k=1:1
         fprintf('open ''%s''\n', label_file_new);
         %fprintf('open "%s"\n', mp4_file);
         
-        %         Samples = SegData(data_file,win,gap,'fft');
+        %Samples = SegData(data_file,win,gap,'fft');
         Samples = SegData(data_file,win,gap);
         
         % Save Samples in txt
@@ -301,6 +301,7 @@ if (exist('outputRF'))
     for i =1:size(outputRF,1)
         res.statRF{i} = calcExtendedResult(outputRF(i,:));
     end
+    save res res
     res.statRF{1}.ConfMat
     res.statRF{1}.ConfMat2
 end
