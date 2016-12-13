@@ -6,4 +6,5 @@ addpath('.\naiveBayes\');
 addpath('.\hmm_ClassifyState\');
 addpath('.\nn_ClassifyState\');
 addpath('.\svm_ClassifyState\');
+addpath('.\online\');
 %addpath('G:\HAR\libsvm-3.21\');

@@ -1,8 +1,16 @@
 %clear all
 close all
 %clc
+%projectDir =  'G:\ActionDataColection\ActionData\0716';
+projectDir =  'G:\HAR';
+%projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)';
+%projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/HAR(20160727)';
+cd(projectDir);
+%DataDir='./SensorData_labeled/Tan/';
+DataDir = 'G:\ActionDataColection\ActionData\SensorData_labled\Tan\';
+%DataDir='/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/new(20140330)/SensorData_labeled/Tan/';
 
-user = 1; % Different user for different setting
+user = 2; % Different user for different setting
 switch user
     case 1 % Luo
         projectDir = '/Users/xiaomuluo/Win7/E/kuaipan/sourcecode/MyDBank/HAR(20160727)';
@@ -35,6 +43,7 @@ Action_name(5) = {'Sit-to-stand'};
 Action_name(6) = {'Stand-to-sit'};
 Action_name(7) = {'Standing'};
 Action_name(8) = {'Walking'};
+ 
 
 %%%%%%% Load Data %%%%%%%%%%%%%%%%%%%%%
 win = 30;
@@ -64,11 +73,31 @@ for cross_k=1:1
         fprintf('open ''%s''\n', label_file_new);
         %fprintf('open "%s"\n', mp4_file);
         
-        %         Samples = SegData(data_file,win,gap,'fft');
+        %Samples = SegData(data_file,win,gap,'fft');
         Samples = SegData(data_file,win,gap);
-        % 		clusterNum = 5;
-        % 		centroid = calcuCentroid(win,gap,clusterNum,projectDir,DataDir);
-        %         Samples = SegData(data_file,win,gap,'k-means',centroid);
+        
+        % Save Samples in txt
+        if 0
+            fidSamp = fopen('samplesSegment_offline32_1.txt','wt');
+            for i = 1:length(Samples)
+                tmp = Samples{i}.Data;
+                for j = 1:size(tmp,1)
+                    for k = 1:size(tmp,2)
+                        fprintf(fidSamp,'%f',tmp(j,k));
+                        fprintf(fidSamp,'%c','  ');
+                    end
+                    fprintf(fidSamp,'%c\n','');
+                end
+                fprintf(fidSamp,'%c\n','');
+                fprintf(fidSamp,'%c\n','');
+            end
+            fclose(fidSamp);
+            save Samples2 Samples
+        end
+        
+% 		clusterNum = 5;
+% 		centroid = calcuCentroid(win,gap,clusterNum,projectDir,DataDir);
+%         Samples = SegData(data_file,win,gap,'k-means',centroid);
         
         % Create the label file for manual tagging XXX_new.csv %
         tmp_label_file = [];
@@ -100,7 +129,6 @@ for cross_k=1:1
             end
         end
         
-        %%% Add the 
         
         
         
@@ -115,6 +143,14 @@ for cross_k=1:1
         else % Testing DataSet
             TestSet = [TestSet Samples];
         end
+ 
+        % Whetehr there are some Samples which PF are empty 
+        for i = 1:length(Samples)
+            if isempty(Samples{i}.PF)
+                i
+            end
+        end
+        
     end
     
     if 0
@@ -265,7 +301,9 @@ if (exist('outputRF'))
     for i =1:size(outputRF,1)
         res.statRF{i} = calcExtendedResult(outputRF(i,:));
     end
+    save res res
     res.statRF{1}.ConfMat
+    res.statRF{1}.ConfMat2
 end
 
 if (exist('outputRF'))

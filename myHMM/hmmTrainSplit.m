@@ -52,6 +52,32 @@ for i = 1:length(TrainingSet)
 end
 
 %%% Training HMM %%%
+<<<<<<< HEAD
+% If some variables are not  existed, take the default variables
+if ~isfield('curExp.try_HMM','var')
+    try_HMM = 2;
+end
+if ~isfield('curExp.M','var')
+    M = 2;
+end
+if ~isfield('curExp.Q','var')
+    Q = 4;
+end
+if ~isfield('curExp.MAX_ITER','var')
+    MAX_ITER = 10;
+end
+if ~isfield('curExp.cov_type','var')
+    cov_type =  'diag';
+end
+
+try_HMM = curExp.try_HMM; %differebt initial values
+M = curExp.M; %Number of mixtures (array)
+Q = curExp.Q; %Number of states (array)
+MAX_ITER = curExp.MAX_ITER;%Max Iteration for HMM
+cov_type = curExp.cov_type;
+
+=======
+>>>>>>> 014c15ddd9d2c3355870162fa7a88347ebcf7307
 %rand('state', 5);
 
 for i=1:length(ActionType)

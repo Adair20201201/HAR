@@ -29,8 +29,9 @@ end
 
 %%% Confusion Matrix
 modelConfMat = calcConfMat(trueLabels', inferedLabels');
-
+modelConfMat2 = calcConfMat2(trueLabels', inferedLabels');
 statStruct.ConfMat = modelConfMat;
+statStruct.ConfMat2 = modelConfMat2;
 
 %save modelConfMat modelConfMat;
 

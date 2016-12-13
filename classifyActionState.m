@@ -102,21 +102,26 @@ for k=1:length(DataIdx)
         curExp.trainSet = conf{i,1}.trainSet;
         curExp.testSet = conf{i,1}.testSet;
         %%%%%%%%%%% Algorithms %%%%%%%%%%
-         
-%         disp('Training and Testing HMM');
-%         curExp. try_HMM = 2; %differebt initial values
-%         curExp.M = 2; %Number of mixtures (array)
-%         curExp.Q = 8; %Number of states (array)
-%         curExp.MAX_ITER = 10;%Max Iteration for HMM
-%         curExp.cov_type = 'diag';
-%         outputHMM{i,k} = TrainTestClassify('hmm', curExp);
-%         %index = index+1;
-%         
-        disp('Training and Testing  Neural Network');
-        outputNN{i,k} = TrainTestClassify('nn', curExp);
+         if 0
+            disp('Training and Testing HMM');
+            curExp. try_HMM = 2; %differebt initial values
+            curExp.M = 2; %Number of mixtures (array)
+            curExp.Q = 8; %Number of states (array)
+            curExp.MAX_ITER = 10;%Max Iteration for HMM
+            curExp.cov_type = 'diag';
+            outputHMM{i,k} = TrainTestClassify('hmm', curExp);
+            %index = index+1£»
+         end
         
-        disp('Training and Testing  SVM');
-        outputSVM{i,k} = TrainTestClassify('svm', curExp);
+         if 1
+            disp('Training and Testing  Neural Network');
+            outputNN{i,k} = TrainTestClassify('nn', curExp);
+         end
+
+        if 1
+             disp('Training and Testing  SVM');
+             outputSVM{i,k} = TrainTestClassify('svm', curExp);
+        end
         
     end
     

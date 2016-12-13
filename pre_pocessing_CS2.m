@@ -1,4 +1,8 @@
 function Output = pre_pocessing_CS2(raw_txt)
+% input£º raw_txt --- The file name of the txt which save the raw data received 
+%                               from PIR sensors                             
+% output: Output --- The 45*M matrix,which each nine  columns datas are a
+%                               messige sended from a sensor node
 
 %fid=fopen('./ActionData/00.txt','rt');
 fid=fopen(raw_txt,'rt');
@@ -26,6 +30,7 @@ while ~feof(fid)
                 (b_t(i+2)==1 || b_t(i+2)==2 || b_t(i+2)==3 || b_t(i+2)==4 || b_t(i+2)==5 || b_t(i+2)==6) &&...% || b(i+2)==64 || b(i+2)==128 || b(i+2)==256 || b(i+2)==512) &&...
                 (i+msg_len-1)<=size(b_t,1) %% FF FF 04 PIR1..PIR9 RSSI:total 13 Bytes
             %c=[c;b(i:i+msg_len-1)' ti];%the first message time=0
+            TransID = b_t(i+12)
             Data_put = [];
             switch b_t(i+2)  % switch between P1 and node number
                 case 1
@@ -82,6 +87,7 @@ Output.Hz=Hz;
 
 % Plot for *.mat %
 % Plot_Node = 1
+% Show the signal received from sensors if needed.
 if 0
     for i=1:(size(Data,1)-1)/9
         figure(i)

@@ -1,12 +1,11 @@
-%function Sample = SegData(label_file,data_file,win,gap)
-%function Sample = SegData(label_file,data_file,win,gap,varargin)
 function Sample = SegData(data_file,win,gap,varargin)
-% Sample = SegData(label_file,data_file,win,gap)
-% label_file - labels.xls file (e.g. 1.xls)
-% data_file - rawData.txt file (e.g. 1.txt)
-% winSize - Window Size for each segment (e.g. =30 points)
-% gap -  the gap between two windows (e.g. =15 points)
-%
+% input: data_file --- rawData.txt file (e.g. 1.txt)
+%           win --- Window Size for each segment (e.g. =30 points)
+%           gap ---  the gap between two windows (e.g. =15 points)
+%           varargin --- Optional variate for differnt feature, for examples, the 'fft' means calculate the 
+%                              fast Fourier transform and the 'k-means' classify the raw data into k clssification.
+% output : Sample --- The segmented data and other more information like
+%                                PF, Speed and so on.
 
 % % Label Matrix
 % A=dlmread(label_file);
@@ -17,14 +16,29 @@ function Sample = SegData(data_file,win,gap,varargin)
 
 % Data Matrix (Data&Time)
 Output=pre_pocessing_CS2(data_file);
+
 tmpData=Output.Data;
+% Save the data in txt
+if 0
+    fid = fopen('offlineAllData32_1.txt','wt');
+    for i = 1:size(tmpData,1)
+        for j = 1:size(tmpData,2)
+            fprintf(fid,'%f',tmpData(i,j));
+            fprintf(fid,'%c','  ');
+        end
+        fprintf(fid,'%c\n','');
+    end
+end
+
+
 tmpTime=Output.Time;
 
 sam_idx = 1;%sample number
 seg = [];
 Beg_Location = 0;
 for k=1:gap:size(tmpData,2)
-    if (k+win)<size(tmpData,2)
+    %if (k+win)<size(tmpData,2)
+    if (k+win - 1)<= size(tmpData,2)
         % Time (most of the datapoints belong to)
         TimeRange=floor(tmpTime(k:k+win-1));
         table=tabulate(TimeRange);
@@ -32,7 +46,7 @@ for k=1:gap:size(tmpData,2)
         I=find(table(:,2)==F);
         result=table(I,1);
         Sample{sam_idx}.Time=result(1);
-        if Sample{sam_idx}.Time==0
+        if Sample{sam_idx}.Time==0 %% VS online segmentData,the outline maybe less one samples
             continue;
         end
 
@@ -112,3 +126,5 @@ end
 if 0 %verbose Info
     size(tmpData,2)
 end
+
+%fclose(fid);
