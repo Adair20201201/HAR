@@ -268,6 +268,14 @@ if (exist('outputRF'))
     res.statRF{1}.ConfMat
 end
 
+if (exist('outputRF'))
+    for i =1:size(outputRF,1)
+        res.statRF{i} = calcExtendedResult(outputRF(i,:));
+    end
+    %res.statRF{1}.ConfMat
+    plotExtendedResult(res.statRF);    
+end
+
 if (exist('outputTM'))
     for i =1:size(outputTM,1)
         res.statTM{i} = calcExtendedResult(outputTM(i,:));
